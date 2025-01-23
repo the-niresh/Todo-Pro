@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, minLength: 6 },
     email: { type: String, required: true, unique: true },
     isAdmin: { type: Boolean, default: false },
+    teams: [ { type: mongoose.Schema.Types.ObjectId, ref: "Team"} ],
     verifyOTP: { type: String, default: "" },
     verifyOTPExpiresAt: { type: Number, default: 0 },
     isUserVerified: { type: Boolean, default: false },
@@ -15,5 +16,5 @@ const userSchema = new mongoose.Schema({
 );
 
 const User = mongoose.models.user || mongoose.model("User", userSchema);
-// console.log("555", User)
+
 export default User;

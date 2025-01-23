@@ -1,11 +1,12 @@
 import Notification from "../models/notification.model.js";
+import Team from "../models/team.model.js";
 import Todo from "../models/todo.model.js";
 import User from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 
 export const createTodo = async (req, res) => {
 	try {
-		const { title,description,status, } = req.body;
+		const { title, description, status, } = req.body;
 		let { img } = req.body;
 		const userId = req.user._id.toString();
 
@@ -26,7 +27,7 @@ export const createTodo = async (req, res) => {
             description,
             img,
             status,
-			user: userId,
+			owner: userId,
 		});
 
 		await newTodo.save();
@@ -38,14 +39,19 @@ export const createTodo = async (req, res) => {
 };
 
 export const deleteTodo = async (req, res) => {
+	const userId = req.user._id.toString();
+	const { teamId } = req.params;
+	
 	try {
-		const todo = await Todo.findById(req.params.id);
-		console.log("req,params",req.params)
+		const todo = await Todo.findById(req.params.todoId);
+
 		if (!todo) {
 			return res.status(404).json({ error: "Todo not found" });
 		}
 
-		if (todo.user.toString() !== req.user._id.toString()) {
+		const isAdmin = await Team.findOne({ _id: teamId, admins: userId });
+		
+		if (todo.owner.toString() !== userId || !isAdmin) {
 			return res.status(401).json({ error: "You are not authorized to delete this todo" });
 		}
 
@@ -64,53 +70,73 @@ export const deleteTodo = async (req, res) => {
 };
 
 export const editTodo = async (req, res) => {
-	const { title, description, status, due, user, team } = req.body;
+	const { title, description, status, due, owner, team } = req.body;
 	let { img } = req.body;
-	const userId = req.user._id;
-
-	const todoID = req.params.id;
-	console.log("---todoID",todoID)
-
+	const userId = req.user._id.toString();
+	const todoId = req.params.todoId;
+  
+	console.log("---todoId", todoId);
+  
 	try {
-		let todo = await Todo.findById(todoID);
-		if (!todo) {
-			return res.status(404).json({ error: "Todo not found" });
+	  let todo = await Todo.findById(todoId);
+	  if (!todo) {
+		return res.status(404).json({ error: "Todo not found" });
+	  }
+  
+	  // Check if the user is the owner of the todo before updating
+	  if (todo.owner.toString() !== userId) {
+		return res.status(401).json({ error: "You are not authorized to update this todo" });
+	  }
+  
+	  if (!title) {
+		return res.status(400).json({ error: "Title field is required" });
+	  }
+  
+	  let ownerChanged = false;
+	  if (owner && todo.owner.toString() !== owner.toString()) {
+		ownerChanged = true;
+		todo.owner = owner;
+	  }
+  
+	  if (img) {
+		if (todo.img) {
+		  await cloudinary.uploader.destroy(todo.img.split("/").pop().split(".")[0]);
 		}
-
-		if (todo.user.toString() !== userId.toString()) {
-			return res.status(401).json({ error: "You are not authorized to update this todo" });
-		}
-
-		if (!title) {
-			return res.status(400).json({ error: "title field is required" });
-		}
-
-		if (img) {
-			if (user.img) {
-				// reference URL = https://res.cloudinary.com/dyfqon1v6/image/upload/v1712997552/zmxorcxexpdbh8r0bkjb.png
-				await cloudinary.uploader.destroy(user.img.split("/").pop().split(".")[0]);
-			}
-			const uploadedResponse = await cloudinary.uploader.upload(img);
-			img = uploadedResponse.secure_url;
-		}
-
-		todo.title = title || todo.title;
-		todo.description = description || todo.description;
-		todo.status = status || todo.status;
-		todo.due = due || todo.due;
-		todo.img = img || todo.img;
-
-		// notify the person
-		const newNotification = new Notification({
-			type: "task_updated",
-			task: todoID,
-			title: todo.title
-		})
-
-		todo = await newNotification.save();
-		return res.status(200).json(todo);
+		const uploadedResponse = await cloudinary.uploader.upload(img);
+		img = uploadedResponse.secure_url;
+	  }
+  
+	  todo.title = title || todo.title;
+	  todo.description = description || todo.description;
+	  todo.status = status || todo.status;
+	  todo.due = due || todo.due;
+	  todo.img = img || todo.img;
+  
+	  todo = await todo.save();
+  
+	  // notify about task update
+	  const taskUpdatedNotification = new Notification({
+		type: "task_updated",
+		todo: todoId,
+		title: todo.title,
+	  });
+	  await taskUpdatedNotification.save();
+  
+	  // NNotify the owner changed
+	  if (ownerChanged) {
+		const ownerChangedNotification = new Notification({
+		  type: "owner_changed",
+		  todo: todoId,
+		  title: todo.title,
+		  newOwner: owner,
+		});
+		await ownerChangedNotification.save();
+	  }
+  
+	  return res.status(200).json({ success: true, todo });
 	} catch (error) {
-		console.log("Error in editTodo: ", error);
-		return res.status(500).json({ error: error.message });
+	  console.log("Error in editTodo:", error);
+	  return res.status(500).json({ error: error.message });
 	}
-}
+  };
+  

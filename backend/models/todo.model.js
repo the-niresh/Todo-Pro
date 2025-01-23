@@ -7,8 +7,8 @@ const todoSchema = new mongoose.Schema(
     img: { type: String },
     status: { type: String },
     due: { type: Date },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Todo", required: true },
-	team: { type: String, required: true }
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+	  team: { type: mongoose.Schema.Types.ObjectId, ref: "Team" }
   },
   { timestamps: true }
 );

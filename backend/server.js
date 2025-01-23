@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes.js"
 import todoRoutes from "./routes/todo.routes.js"
 import connectMongoDB from "./config/db.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import teamRoutes from "./routes/team.routes.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(cors({ origin: allowOrigins, credentials: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/todo", todoRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/teams", teamRoutes);
 
 // LISTEN
 app.listen(5000, () => {

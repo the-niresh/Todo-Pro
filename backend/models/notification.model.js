@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
 	{
+		todo: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Todo",
+			required: true,
+		},
 		title: {
 			type: String,
 			ref: "Todo",

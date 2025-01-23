@@ -5,7 +5,7 @@ import { createTodo, deleteTodo, editTodo } from "../controllers/todo.controller
 const todoRoutes = express.Router();
 
 todoRoutes.post("/create", protectRoute, createTodo);
-todoRoutes.delete("/:id", protectRoute, deleteTodo);
-todoRoutes.post("/edit/:id", protectRoute, editTodo);
+todoRoutes.delete("/:teamId/:todoId", protectRoute, deleteTodo);
+todoRoutes.post("/edit/:teamId/:todoId", protectRoute, editTodo);
 
 export default todoRoutes;

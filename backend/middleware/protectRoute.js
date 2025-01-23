@@ -2,29 +2,22 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
 export const protectRoute = async (req, res, next) => {
-  // console.log("111,req", req);
   const token = req.cookies["jwt-todo-pro"];
-  console.log("111,token", token);
 
   if (!token) {
     return res.status(401).json({ error: "Unauthorized: No Token Provided" });
   }
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("444,decodedtoken",decodedToken)
     if (!decodedToken) {
       return res.status(401).json({ error: "Unauthorized: Invalid Token" });
     }
-    console.log("444,user", User)
     const user = await User.findById(decodedToken.userId).select("-password");
-    console.log("444,user",user)
     
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    console.log("444,REQuser",req.user)
     req.user = user;
-    console.log("444,user",user)
     next();
   } catch (err) {
     console.log("Error in protectRoute middleware", err.message);
