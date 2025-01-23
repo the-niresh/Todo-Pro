@@ -1,13 +1,30 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+import authRoutes from "./routes/auth.routes.js"
+import todoRoutes from "./routes/todo.routes.js"
+import connectMongoDB from "./config/db.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+connectMongoDB();
 
-// ROUTES
-// app.use("/api/auth", authRoutes);
+const allowOrigins = ["http://localhost:5173"]
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true })); 
+app.use(cors({ origin: allowOrigins, credentials: true }));
+
+// ROUTES-api endpoints
+app.use("/api/auth", authRoutes);
+app.use("/api/todo", todoRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // LISTEN
 app.listen(5000, () => {
