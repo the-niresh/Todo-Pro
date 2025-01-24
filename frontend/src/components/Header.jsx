@@ -1,11 +1,10 @@
 import { useContext } from "react";
 import { AppContent } from "../context/app.context";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const {userData, backendURL} = useContext(AppContent);
   
   return (
@@ -16,9 +15,9 @@ const Header = () => {
             <img src="hand_wave.png" alt="hand_wave" className="w-8 aspect-square" />
         </h1>
         <h2 className="text-3xl sm:text-5xl font-semibold mb-4">Welcome to Todo-Pro..!!</h2>
-        <p className="mb-8 max-w-md ">Let's organize our Todo-lists collaboratively like a pro..!!</p>
-        <button className="border border-gray-500 rounded-full px-8 pu-2.5 hover:bg-gray-100 transition-all"
-        onClick={userData.isUserVerified ? ()=> navigate("/dashboard") : ()=> navigate("/email-verify")}>{userData ? userData.isUserVerified ? "Dashboard..!!" : "Verify Email" : "Get Started..!!"}</button>
+        <p className="mb-8 max-w-md ">Organize your Todo-lists collaboratively like a pro..!!</p>
+        {location.pathname !== "/dashboard" && !(<button className="border border-gray-500 rounded-full px-8 pu-2.5 hover:bg-gray-100 transition-all"
+        onClick={userData.isUserVerified ? ()=> navigate("/dashboard") : ()=> navigate("/email-verify")}>{userData ? userData.isUserVerified ? "Dashboard..!!" : "Verify Email" : "Get Started..!!"}</button>)}
     </div>
   )
 }

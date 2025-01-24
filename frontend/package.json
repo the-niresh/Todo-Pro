@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@heroicons/react": "^2.2.0",
+    "ag-grid-community": "^33.0.4",
+    "ag-grid-react": "^33.0.4",
     "axios": "^1.7.9",
     "framer-motion": "^12.0.1",
     "lucide-react": "^0.473.0",
@@ -25,6 +29,7 @@
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.23",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",

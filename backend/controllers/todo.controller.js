@@ -16,6 +16,9 @@ export const createTodo = async (req, res) => {
 		if (!title) {
 			return res.status(400).json({ error: "A Todo should at least have a title" });
 		}
+		if (!status) {
+			return res.status(400).json({ error: "Add status" });
+		}
 
 		if (img) {
 			const uploadedResponse = await cloudinary.uploader.upload(img);
@@ -140,3 +143,42 @@ export const editTodo = async (req, res) => {
 	}
   };
   
+  export const getAllTodos = async (req, res) => {
+	try {
+		const todo = await Todo.find().sort({ createdAt: -1 })
+			// .populate({
+			// 	path: "user",
+			// 	select: "-password",
+			// })
+			// .populate({
+			// 	path: "comments.user",
+			// 	select: "-password",
+			// });
+
+		if (todo.length === 0) {
+			return res.status(200).json([]);
+		}
+
+		res.status(200).json(todo);
+	} catch (error) {
+		console.log("Error in getAllTodos controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};
+
+export const getOneTodo = async (req, res) => {
+	try {
+		const { todoId } = req.params;
+
+		const todo = await Todo.findOne({ _id: todoId });
+		if (!todo) return res.status(404).json({ error: "Todo not found" });
+
+		const todos = await Todo.find({ todo: todo._id })
+			.sort({ createdAt: -1 })
+
+		res.status(200).json(todo);
+	} catch (error) {
+		console.log("Error in getUserPosts controller: ", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+};

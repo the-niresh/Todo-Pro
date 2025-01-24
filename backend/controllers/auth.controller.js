@@ -140,7 +140,7 @@ export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-password");
 	// TODO console log user and check
-  console.log("!!!,user,getme",user)
+  // console.log("!!!,user,getme",user)
     res.status(200).json(user);
   } catch (error) {
     console.log("Error in getMe controller", error.message);

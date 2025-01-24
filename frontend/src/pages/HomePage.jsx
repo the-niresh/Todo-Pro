@@ -3,8 +3,7 @@ import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   return (
-    <div className="flex flex-col items-center justify-center">
-      <Navbar />
+    <div className="absolute inset-0 -z-100 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]">
       <Header />
     </div>
   )
