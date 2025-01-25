@@ -6,15 +6,14 @@ import { useNavigate } from "react-router-dom";
 import { AppContent } from "../context/app.context";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Navbar from "../components/Navbar";
 
 const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const {backendURL, setIsLoggedIn,getUserData} = useContext(AppContent);
+  const { backendURL, setIsLoggedIn, getUserData } = useContext(AppContent);
 
-  const [ state, setState] = useState('Sign Up.!!')
+  const [ state, setState] = useState('Login.!!')
   const [ name, setName] = useState("")
   const [ email, setEmail] = useState("")
   const [ password, setPassword] = useState("")
@@ -51,8 +50,7 @@ const LoginPage = () => {
   }
 
   return (
-	<div className="flex items-center justify-center min-h-screen">
-    <Navbar/>
+	<div className="flex flex-col items-center justify-center min-h-screen">
     {/* TODO: add fradient to the below div */}
     <div className="bg-slate-900 p-10 rounded-lg shadow-lg w-full sm:w-96 text-indigo-300 text-sm">
       <h2 className="text-3xl font-semibold text-white text-center mb-3">{state === "Sign Up.!!" ? "Create account..!!" : "Login.!!"}</h2>
@@ -79,16 +77,6 @@ const LoginPage = () => {
           onChange={e => setPassword(e.target.value)} value={password} />
         </div>
 
-        {state === "Sign Up.!!" && (
-          <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
-            <RiAdminFill />
-            <select className="bg-[#333A5C] outline-none w-full text-white" required >
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
-          </div>
-        )}
-
         <p className="mb-4 text-indigo-500 cursor-pointer" onClick={() => navigate("/reset-password")}>Forgot Password.?!</p>
 
         <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900"
@@ -110,8 +98,6 @@ const LoginPage = () => {
         </span>
       </p>
       )}
-      
-      
     </div>
   </div>
   )

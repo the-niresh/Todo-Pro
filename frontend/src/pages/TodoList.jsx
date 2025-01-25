@@ -1,63 +1,74 @@
-import SidePanel from "../components/SidePanel";
 import { AgGridReact } from "ag-grid-react";
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { ModuleRegistry, themeBalham } from "ag-grid-community"; // For registering modules
+import { ClientSideRowModelModule } from "ag-grid-community"; // Import required module
+import { useState, useEffect, useMemo, useContext } from "react";
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme CSS
+import { AppContent } from "../context/app.context";
+import SidePanel from "../components/SidePanel";
+
+// Register the ClientSideRowModelModule
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const TodoList = () => {
-  const Grid = () => {
-    // Row Data: The data to be displayed.
-    const [rowData, setRowData] = useState([
-      { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-      { make: "Ford", model: "F-Series", price: 33850, electric: false },
-      { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    ]);
+  const { getTodosList, todoslist } = useContext(AppContent); // Extracting needed functions and state
+  const [rowData, setRowData] = useState([]); // Local state for grid data
 
-    // Column Definitions: Defines the columns to be displayed.
-    const [colDefs, setColDefs] = useState([
-      { field: "make" },
-      { field: "model" },
-      { field: "price" },
-      { field: "electric" },
-    ]);
-  };
+  // Define column definitions for the grid
+  const [colDefs] = useState([
+    // { field: "id", headerName: "ID", sortable: true, filter: true },
+    { field: "title", headerName: "Title", sortable: true, filter: true },
+    { field: "status", headerName: "Status", sortable: true, filter: true },
+    { field: "due", headerName: "Due Date", sortable: true, filter: true },
+    { field: "owner", headerName: "assigned to", sortable: true, filter: true },
+    {
+      field: "createdAt",
+      headerName: "Created on",
+      sortable: true,
+      filter: true,
+    },
+    {
+      field: "updatedAt",
+      headerName: "Updated on",
+      sortable: true,
+      filter: true,
+    },
+  ]);
+
+  // Fetch todos list on component mount
+  useEffect(() => {
+    const fetchTodos = async () => {
+      await getTodosList(); // Call context function to fetch todos
+    };
+    fetchTodos();
+  }, [getTodosList]);
+
+  useEffect(() => {
+    const transformedData = todoslist.map((todo) => ({
+      title: todo.title,
+      status: todo.status,
+      createdAt: new Date(todo.createdAt).toLocaleString(),
+    }));
+    setRowData(transformedData);
+  }, [todoslist]);
 
   return (
-    <div>
+    <div className='flex h-screen overflow-hidden'>
       <SidePanel />
-      <div className="overflow-x-auto">
-        <table className="table flex max-w-7xl mx-auto py-6 px-4 lg:px-8">
-          {/* head */}
-          <thead>
-            <tr>
-              <th></th>
-              <th>Todo</th>
-              <th>Status</th>
-              <th>Favorite Color</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* row 1 */}
-            <tr>
-              <th>1</th>
-              <td>Cy Ganderton</td>
-              <td>Quality Control Specialist</td>
-              <td>Blue</td>
-            </tr>
-            {/* row 2 */}
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop Support Technician</td>
-              <td>Purple</td>
-            </tr>
-            {/* row 3 */}
-            <tr>
-              <th>3</th>
-              <td>Brice Swyre</td>
-              <td>Tax Accountant</td>
-              <td>Red</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="TodoList py-24 w-full">
+        <h1 className="text-4xl p-3">TodoList..!!</h1>
+        <div
+          className="ag-theme-alpine p-2"
+          style={{ height: "80%", width: "100%" }}
+        >
+          <AgGridReact
+            domLayout="autoHeight"
+            // onGridReady={onGridReady}
+            rowData={rowData}
+            columnDefs={colDefs}
+            animateRows={true}
+            defaultColDef={{ resizable: true }} // Make columns resizable
+          />
+        </div>
       </div>
     </div>
   );

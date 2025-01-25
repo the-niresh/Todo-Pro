@@ -9,18 +9,13 @@ import axios from "axios";
 const SidePanel = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { backendURL, setIsLoggedIn, getUserData } = useContext(AppContent);
+  const { backendURL, userData, getTodosList, getTodosBoard } = useContext(AppContent);
 
-  // functions for each item APi call
   const onClickTodoList = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/api/todo/getAll`, { withCredentials: true });
-      if (data.success) {
-        setIsLoggedIn(true);
-        navigate("/todo-list");
-      } else {
-        toast.error(data.message);
-      }
+      // Fetch the todo list using the context function
+      await getTodosList();
+      navigate("/todo-list");
     } catch (error) {
       toast.error(error.message || "Failed to fetch Todo List");
     }
@@ -28,12 +23,9 @@ const SidePanel = () => {
 
   const onClickTodoBoard = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/api/board/getAll`, { withCredentials: true });
-      if (data.success) {
-        navigate("/todo-board");
-      } else {
-        toast.error(data.message);
-      }
+      // Fetch the todo board using the context function
+      await getTodosBoard();
+      navigate("/todo-board");
     } catch (error) {
       toast.error(error.message || "Failed to fetch Todo Board");
     }
@@ -43,7 +35,6 @@ const SidePanel = () => {
     try {
       const { data } = await axios.get(`${backendURL}/api/notifications`, { withCredentials: true });
       if (data.success) {
-        toast.success("Fetched Notifications");
         navigate("/notifications");
       } else {
         toast.error(data.message);
@@ -55,19 +46,12 @@ const SidePanel = () => {
 
   const onClickProfile = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/api/profile`, { withCredentials: true });
-      if (data.success) {
-        getUserData();
-        navigate("/profile");
-      } else {
-        toast.error(data.message);
-      }
+      userData ? navigate("/profile") : toast.error("User not logged in");
     } catch (error) {
       toast.error(error.message || "Failed to fetch Profile");
     }
   };
 
-  
   const SIDEBAR_ITEMS = [
     { name: "Todo list..!!", icon: ListTodo, color: "#6366f1", href: "/todo-list", onClick: onClickTodoList },
     { name: "Todo board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
@@ -77,12 +61,12 @@ const SidePanel = () => {
 
   return (
     <motion.div
-      className={`relative z-50 transition-all duration-300 ease-in-out flex-shrink-0 ${
-        isSidebarOpen ? "w-64" : "w-20"
+      className={`relative z-10 transition-all duration-300 ease-in-out flex-shrink-0 py-24 ${
+        isSidebarOpen ? "w-60" : "w-20"
       }`}
-      animate={{ width: isSidebarOpen ? 256 : 80 }}
+      animate={{ width: isSidebarOpen ? 240 : 80 }}
     >
-      <div className="h-full bg-gray-800 bg-opacity-50 backdrop-blur-md p-4 flex flex-col border-r border-gray-700">
+      <div className="h-full bg-opacity-50 backdrop-blur-md p-4 flex flex-col border-r">
         {/* Sidebar toggle button */}
         <motion.button
           whileHover={{ scale: 1.1 }}
@@ -101,10 +85,7 @@ const SidePanel = () => {
               className="flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2 cursor-pointer"
               onClick={item.onClick}
             >
-              <item.icon
-                size={20}
-                style={{ color: item.color, minWidth: "20px" }}
-              />
+              <item.icon size={20} style={{ color: item.color, minWidth: "20px" }} />
               <AnimatePresence>
                 {isSidebarOpen && (
                   <motion.span

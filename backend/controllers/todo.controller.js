@@ -34,7 +34,7 @@ export const createTodo = async (req, res) => {
 		});
 
 		await newTodo.save();
-		res.status(201).json(newTodo);
+		return res.status(201).json({success:true, todo: newTodo});
 	} catch (error) {
         console.log("Error in createTodo controller: ", error);
 		res.status(500).json({ error: "Internal server error" });
@@ -146,20 +146,12 @@ export const editTodo = async (req, res) => {
   export const getAllTodos = async (req, res) => {
 	try {
 		const todo = await Todo.find().sort({ createdAt: -1 })
-			// .populate({
-			// 	path: "user",
-			// 	select: "-password",
-			// })
-			// .populate({
-			// 	path: "comments.user",
-			// 	select: "-password",
-			// });
 
 		if (todo.length === 0) {
 			return res.status(200).json([]);
 		}
 
-		res.status(200).json(todo);
+		return res.status(200).json({ success: true, todo});
 	} catch (error) {
 		console.log("Error in getAllTodos controller: ", error);
 		res.status(500).json({ error: "Internal server error" });
@@ -176,9 +168,45 @@ export const getOneTodo = async (req, res) => {
 		const todos = await Todo.find({ todo: todo._id })
 			.sort({ createdAt: -1 })
 
-		res.status(200).json(todo);
+		return res.status(200).json({ success: true, todo});
 	} catch (error) {
 		console.log("Error in getUserPosts controller: ", error);
 		res.status(500).json({ error: "Internal server error" });
 	}
+};
+
+export const getBoardTodos = async (req, res) => {
+    try {
+        // Fetch todos grouped by their status
+        const todoStatuses = ["Todo", "In-progress", "Done"];
+        const todosByStatus = {};
+
+        for (const status of todoStatuses) {
+            const todos = await Todo.find({ status }).sort({ createdAt: -1 });
+            todosByStatus[status] = todos;
+        }
+
+        return res.status(200).json({ success: true, todosByStatus });
+    } catch (error) {
+        console.error("Error in getBoardTodos controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+export const getTodosByStatus = async (req, res) => {
+    try {
+        const { status } = req.query; // Extract status from query parameters
+
+        // Fetch todos based on the status provided in the query
+        const todos = await Todo.find({ status }).sort({ createdAt: -1 });
+
+        if (todos.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        return res.status(200).json({ success: true, todos });
+    } catch (error) {
+        console.error("Error in getTodosByStatus controller: ", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };

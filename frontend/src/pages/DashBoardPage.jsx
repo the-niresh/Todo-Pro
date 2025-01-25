@@ -8,7 +8,6 @@ const DashBoardPage = () => {
   return (
     <div>
       <SidePanel />
-      <Header />
     </div>
   );
 };

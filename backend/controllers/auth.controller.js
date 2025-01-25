@@ -55,7 +55,7 @@ export const signup = async (req, res) => {
 
     if (newUser) {
       generateTokenAndSetCookie(newUser._id, res);
-      // saving user in DB
+      
       await newUser.save();
 
       // sending welcome mail
@@ -109,15 +109,7 @@ export const login = async (req, res) => {
 
     generateTokenAndSetCookie(user._id, res);
 
-    res.status(200).json({
-		success: true,
-		message: "Login Success"
-    //   _id: user._id,
-    //   fullName: user.fullName,
-    //   username: user.username,
-    //   email: user.email,
-    //   isAdmin: user.isAdmin,
-    });
+    res.status(200).json({ success: true, message: "Login Success" });
   } catch (error) {
     console.log("Error in login controller", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -128,20 +120,27 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     res.clearCookie("jwt-todo-pro");
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log("Error in logout controller", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// get my profile controller
+// get my profile
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.user._id).select("-password")
+    .populate({
+      path: "teams.team", select: "teamName admins",
+    });
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found" });
+  }
 	// TODO console log user and check
   // console.log("!!!,user,getme",user)
-    res.status(200).json(user);
+    res.status(200).json({ success: true, user });
   } catch (error) {
     console.log("Error in getMe controller", error.message);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -155,9 +154,7 @@ export const sendVerifyOTP = async (req, res) => {
     const user = await User.findById(userId).select("-password");
 
     if (user.isUserVerified) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User is already verified" });
+      return res.status(400).json({ success: false, message: "User is already verified" });
     }
     // logic for generating OTP
     const OTP = String(Math.floor(100000 + Math.random() * 900000));
