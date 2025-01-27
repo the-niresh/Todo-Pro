@@ -13,6 +13,7 @@ export const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(false);
   const [todoslist, setTodosList] = useState([]);
   const [todosBoard, setTodosBoard] = useState({});
+  const [notifications, setNotifications] = useState([]);
 
   // Initialize socket connection
   const socket = io(backendURL);
@@ -21,11 +22,9 @@ export const AppContextProvider = (props) => {
   const fetchData = async (url, successCallback, errorMessage) => {
     try {
       const { data } = await axios.get(url, { withCredentials: true });
-      console.log("+++",data)
       if (data.success) {
-        console.log("+++")
+        console.log("+++",data)
         successCallback(data);
-        console.log("successCallback(data)",successCallback(data))
       } else {
         toast.error(data.message || errorMessage);
       }
@@ -74,6 +73,14 @@ export const AppContextProvider = (props) => {
     );
   }, [backendURL]);
 
+  const getNotifications = useCallback(async () => {
+    fetchData(
+      `${backendURL}/api/notifications`,
+      (data) => setNotifications(data.notifications),
+      "Failed to fetch Notifications"
+    );
+  }, [backendURL]);
+
   // Handle real-time updates from the server
   useEffect(() => {
     socket.on("todosUpdated", (updatedTodos) => {
@@ -101,8 +108,11 @@ export const AppContextProvider = (props) => {
     todoslist,
     setTodosList,
     todosBoard,
+    notifications,
+    setNotifications,
     getTodosList,
     getTodosBoard,
+    getNotifications
   };
 
   return (

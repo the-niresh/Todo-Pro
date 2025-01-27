@@ -1,8 +1,8 @@
 import { AgGridReact } from "ag-grid-react";
-import { ModuleRegistry, themeBalham } from "ag-grid-community"; // For registering modules
-import { ClientSideRowModelModule } from "ag-grid-community"; // Import required module
+import { ModuleRegistry } from "ag-grid-community";
+import { ClientSideRowModelModule } from "ag-grid-community";
 import { useState, useEffect, useMemo, useContext } from "react";
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme CSS
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AppContent } from "../context/app.context";
 import SidePanel from "../components/SidePanel";
 
@@ -10,8 +10,8 @@ import SidePanel from "../components/SidePanel";
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const TodoList = () => {
-  const { getTodosList, todoslist } = useContext(AppContent); // Extracting needed functions and state
-  const [rowData, setRowData] = useState([]); // Local state for grid data
+  const { getTodosList, todoslist } = useContext(AppContent);
+  const [rowData, setRowData] = useState([]);
 
   // Define column definitions for the grid
   const [colDefs] = useState([
@@ -19,25 +19,15 @@ const TodoList = () => {
     { field: "title", headerName: "Title", sortable: true, filter: true },
     { field: "status", headerName: "Status", sortable: true, filter: true },
     { field: "due", headerName: "Due Date", sortable: true, filter: true },
-    { field: "owner", headerName: "assigned to", sortable: true, filter: true },
-    {
-      field: "createdAt",
-      headerName: "Created on",
-      sortable: true,
-      filter: true,
-    },
-    {
-      field: "updatedAt",
-      headerName: "Updated on",
-      sortable: true,
-      filter: true,
-    },
+    { field: "owner", headerName: "Owner", sortable: true, filter: true },
+    { field: "createdAt", headerName: "Created on", sortable: true, filter: true, },
+    { field: "updatedAt", headerName: "Updated on", sortable: true, filter: true, },
   ]);
 
   // Fetch todos list on component mount
   useEffect(() => {
     const fetchTodos = async () => {
-      await getTodosList(); // Call context function to fetch todos
+      await getTodosList();
     };
     fetchTodos();
   }, [getTodosList]);
@@ -46,6 +36,8 @@ const TodoList = () => {
     const transformedData = todoslist.map((todo) => ({
       title: todo.title,
       status: todo.status,
+      owner: todo.owner,
+      due: todo.due,
       createdAt: new Date(todo.createdAt).toLocaleString(),
     }));
     setRowData(transformedData);
@@ -66,7 +58,7 @@ const TodoList = () => {
             rowData={rowData}
             columnDefs={colDefs}
             animateRows={true}
-            defaultColDef={{ resizable: true }} // Make columns resizable
+            defaultColDef={{ resizable: true }} // resizable
           />
         </div>
       </div>

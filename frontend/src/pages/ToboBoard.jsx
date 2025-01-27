@@ -1,47 +1,97 @@
-import Navbar from "../components/Navbar";
+import { useState } from "react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import SidePanel from "../components/SidePanel";
 
-const TodoList = () => {
+const TodoBoard = () => {
+  const initialData = [
+    { id: 1, title: "Task 1", status: "Todo" },
+    { id: 2, title: "Task 2", status: "In-progress" },
+    { id: 3, title: "Task 3", status: "Done" },
+  ];
+
+  const [todoData, setTodoData] = useState(
+    initialData.filter((t) => t.status === "Todo")
+  );
+  const [inProgressData, setInProgressData] = useState(
+    initialData.filter((t) => t.status === "In-progress")
+  );
+  const [doneData, setDoneData] = useState(
+    initialData.filter((t) => t.status === "Done")
+  );
+
+  const getRowId = (params) => params.data.id;
+
+  const handleRowDrop = (event, targetGrid, setTargetData, setSourceData) => {
+    const movingRow = event.api.getSelectedNodes()[0]?.data;
+
+    if (movingRow) {
+      setSourceData((prev) => prev.filter((row) => row.id !== movingRow.id));
+      setTargetData((prev) => [...prev, { ...movingRow, status: targetGrid }]);
+    }
+  };
+
   return (
-    <div className="flex-1 relative z-0">
-      <Navbar />
-      <div className="overflow-x-auto">
-        <table className="table flex max-w-7xl mx-auto py-6 px-4 lg:px-8">
-          {/* head */}
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* row 1 */}
-            <tr>
-              <th>1</th>
-              <td>Cy Ganderton</td>
-              <td>Quality Control Specialist</td>
-              <td>Blue</td>
-            </tr>
-            {/* row 2 */}
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop Support Technician</td>
-              <td>Purple</td>
-            </tr>
-            {/* row 3 */}
-            <tr>
-              <th>3</th>
-              <td>Brice Swyre</td>
-              <td>Tax Accountant</td>
-              <td>Red</td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="flex h-screen overflow-hidden">
+      <SidePanel />
+      <div className="TodoBoard py-24 w-full">
+        <h1 className="text-4xl p-4">Todo Board..!!</h1>
+        <div style={{ display: "flex", gap: "20px", margin: "20px" }}>
+          {/* Todo Grid */}
+          <div className="ag-theme-alpine" style={{ width: 300, height: 400 }}>
+            <h3>Todo</h3>
+            <AgGridReact
+              rowData={todoData}
+              columnDefs={[
+                { field: "title", headerName: "Tasks", rowDrag: true },
+              ]}
+              getRowId={getRowId}
+              rowDragManaged={true}
+              animateRows={true}
+              onRowDragEnd={(params) =>
+                handleRowDrop(params, "In-progress", setInProgressData, setTodoData)
+              }
+            />
+          </div>
+
+          {/* In-progress Grid */}
+          <div className="ag-theme-alpine" style={{ width: 300, height: 400 }}>
+            <h3>In-Progress</h3>
+            <AgGridReact
+              rowData={inProgressData}
+              columnDefs={[
+                { field: "title", headerName: "Tasks", rowDrag: true },
+              ]}
+              getRowId={getRowId}
+              rowDragManaged={true}
+              animateRows={true}
+              onRowDragEnd={(params) =>
+                handleRowDrop(params, "Done", setDoneData, setInProgressData)
+              }
+            />
+          </div>
+
+          {/* Done Grid */}
+          <div className="ag-theme-alpine" style={{ width: 300, height: 400 }}>
+            <h3>Done</h3>
+            <AgGridReact
+              rowData={doneData}
+              columnDefs={[
+                { field: "title", headerName: "Tasks", rowDrag: true },
+              ]}
+              getRowId={getRowId}
+              rowDragManaged={true}
+              animateRows={true}
+              onRowDragEnd={(params) =>
+                handleRowDrop(params, "Todo", setTodoData, setDoneData)
+              }
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default TodoList;
+export default TodoBoard;

@@ -8,7 +8,7 @@ todoRoutes.post("/create", protectRoute, createTodo);
 todoRoutes.get("/get/:todoId", protectRoute, getOneTodo);
 todoRoutes.get("/list/getAll", protectRoute, getAllTodos);
 todoRoutes.get("/board/getAll", protectRoute, getBoardTodos);
-todoRoutes.delete("/:teamId/:todoId", protectRoute, deleteTodo);
-todoRoutes.post("/edit/:teamId/:todoId", protectRoute, editTodo);
+todoRoutes.delete("/:todoId", protectRoute, deleteTodo);
+todoRoutes.post("/edit/:todoId", protectRoute, editTodo);
 
 export default todoRoutes;

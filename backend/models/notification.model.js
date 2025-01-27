@@ -7,6 +7,10 @@ const notificationSchema = new mongoose.Schema(
 			ref: "Todo",
 			required: true,
 		},
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		},
 		title: {
 			type: String,
 			ref: "Todo",

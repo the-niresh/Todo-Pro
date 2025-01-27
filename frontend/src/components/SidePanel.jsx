@@ -1,4 +1,4 @@
-import { BellDot, CircleUserRound, CircuitBoard, ListTodo, Menu } from "lucide-react";
+import { BellDot, CircleUserRound, CircuitBoard, LayoutDashboard, ListTodo, Menu } from "lucide-react";
 import { useContext, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,16 @@ const SidePanel = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { backendURL, userData, getTodosList, getTodosBoard } = useContext(AppContent);
+
+  const onClickDashboard = async () => {
+    try {
+      
+      // await getTodosList();
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error.message || "Failed to fetch dashboard");
+    }
+  };
 
   const onClickTodoList = async () => {
     try {
@@ -33,12 +43,7 @@ const SidePanel = () => {
 
   const onClickNotifications = async () => {
     try {
-      const { data } = await axios.get(`${backendURL}/api/notifications`, { withCredentials: true });
-      if (data.success) {
         navigate("/notifications");
-      } else {
-        toast.error(data.message);
-      }
     } catch (error) {
       toast.error(error.message || "Failed to fetch Notifications");
     }
@@ -53,10 +58,11 @@ const SidePanel = () => {
   };
 
   const SIDEBAR_ITEMS = [
+    { name: "Dashboard", icon: LayoutDashboard, color: "#3B82F6", href: "/dashboard", onClick: onClickDashboard },
     { name: "Todo list..!!", icon: ListTodo, color: "#6366f1", href: "/todo-list", onClick: onClickTodoList },
-    { name: "Todo board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
+    // { name: "Todo board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
     { name: "Notifications", icon: BellDot, color: "#EC4899", href: "/notifications", onClick: onClickNotifications },
-    { name: "Profile", icon: CircleUserRound, color: "#10B981", href: "/profile", onClick: onClickProfile }
+    // { name: "Profile", icon: CircleUserRound, color: "#10B981", href: "/profile", onClick: onClickProfile }
   ];
 
   return (
