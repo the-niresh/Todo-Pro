@@ -18,7 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 connectMongoDB();
 
-const allowOrigins = ["http://localhost:5173"]
+const allowOrigins = [process.env.VITE_FRONTEND_URL]
 
 app.use(express.json());
 app.use(cookieParser());

@@ -19,9 +19,10 @@ import Footer from './components/Footer';
 
 export default function App() {
   const {userData} = useContext(AppContent)
-  // console.log("($$$",userData);
   const location = useLocation();
+
   //  className='flex h-screen overflow-hidden'
+  
   return (
     <div>
       {/* <div className="absolute inset-0 -z-50 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]"></div> */}
