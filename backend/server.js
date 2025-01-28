@@ -38,9 +38,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: allowOrigins,
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     credentials: true,
   },
+  allowEIO3: true
 });
 
 // Handle Socket.IO Connections
