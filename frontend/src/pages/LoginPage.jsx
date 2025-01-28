@@ -80,7 +80,7 @@ const LoginPage = () => {
         <p className="mb-4 text-indigo-500 cursor-pointer" onClick={() => navigate("/reset-password")}>Forgot Password.?!</p>
 
         <button className="w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900"
-        onClick={() => navigate("/email-verify")}>{state}</button>
+        >{state}</button>
       </form>
 
       {state === "Sign Up.!!" ? (

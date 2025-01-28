@@ -62,7 +62,7 @@ const SidePanel = () => {
     { name: "Todo list..!!", icon: ListTodo, color: "#6366f1", href: "/todo-list", onClick: onClickTodoList },
     // { name: "Todo board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
     { name: "Notifications", icon: BellDot, color: "#EC4899", href: "/notifications", onClick: onClickNotifications },
-    // { name: "Profile", icon: CircleUserRound, color: "#10B981", href: "/profile", onClick: onClickProfile }
+    { name: "Profile", icon: CircleUserRound, color: "#10B981", href: "/profile", onClick: onClickProfile }
   ];
 
   return (

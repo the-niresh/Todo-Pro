@@ -6,7 +6,6 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AppContent } from "../context/app.context";
 import SidePanel from "../components/SidePanel";
 
-// Register the ClientSideRowModelModule
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const TodoList = () => {
@@ -15,7 +14,6 @@ const TodoList = () => {
 
   // Define column definitions for the grid
   const [colDefs] = useState([
-    // { field: "id", headerName: "ID", sortable: true, filter: true },
     { field: "title", headerName: "Title", sortable: true, filter: true },
     { field: "status", headerName: "Status", sortable: true, filter: true },
     { field: "due", headerName: "Due Date", sortable: true, filter: true },
@@ -24,7 +22,6 @@ const TodoList = () => {
     { field: "updatedAt", headerName: "Updated on", sortable: true, filter: true, },
   ]);
 
-  // Fetch todos list on component mount
   useEffect(() => {
     const fetchTodos = async () => {
       await getTodosList();

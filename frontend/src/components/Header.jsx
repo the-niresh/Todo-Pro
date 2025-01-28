@@ -6,7 +6,6 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const {userData, backendURL} = useContext(AppContent);
-  console.log("LLL,",userData)
   
   return (
     <div className="flex flex-col items-center mt-20 px-4 p-32 text-center text-gray-800">

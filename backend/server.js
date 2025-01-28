@@ -22,7 +22,8 @@ const allowOrigins = [process.env.VITE_FRONTEND_URL]
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cors({ origin: allowOrigins, credentials: true }));
 
 // ROUTES-api endpoints

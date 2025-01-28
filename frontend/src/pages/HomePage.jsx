@@ -5,13 +5,15 @@ import { AppContent } from "@/context/app.context";
 import SidePanel from "@/components/SidePanel";
 
 const HomePage = () => {
-  const {userData} = useContext(AppContent)
+  const { userData } = useContext(AppContent);
   return (
-    <div className="absolute inset-0 -z-100 h-full w-full">
+    <div>
       {userData && <SidePanel />}
-      <Header />
+      <div className="absolute inset-0 h-full w-full">
+        <Header />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
