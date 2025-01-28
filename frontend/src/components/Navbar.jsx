@@ -130,7 +130,8 @@ const Navbar = () => {
               {selectedTeam === "Teams" ? " " : isTeamAdmin ? "Admin" : "User"}
             </p>
             <div className="flex items-center justify-center" tabIndex={0} role="button"
-            onClick={navigate("/dashboard")}>
+            // onClick={navigate("/dashboard")}
+            >
               <AiOutlineUsergroupAdd className="h-8 w-8" />
             </div>
             <div className="dropdown dropdown-hover">
