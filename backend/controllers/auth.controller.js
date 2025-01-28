@@ -75,7 +75,7 @@ export const signup = async (req, res) => {
         // username: newUser.username,
         // email: newUser.email,
         // isAdmin: newUser.isAdmin,
-		// mailSent: true
+		    // mailSent: true
       });
     } else {
       res.status(400).json({ error: "Invalid user data" });

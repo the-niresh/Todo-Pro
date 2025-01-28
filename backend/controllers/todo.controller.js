@@ -58,10 +58,8 @@ export const deleteTodo = async (req, res) => {
 
     const isAdmin = await Team.findOne({ _id: teamId, admins: userId });
 
-    if (todo.owner.toString() !== userId || !isAdmin) {
-      return res
-        .status(401)
-        .json({ error: "You are not authorized to delete this todo" });
+    if (todo.owner.toString() !== userId) {
+      return res.status(401).json({ error: "You are not authorized to delete this todo" });
     }
 
     if (todo.img) {
@@ -97,9 +95,7 @@ export const editTodo = async (req, res) => {
 
     // Check if the user is the owner of the todo before updating
     if (todo.owner.toString() !== userId) {
-      return res
-        .status(401)
-        .json({ error: "You are not authorized to update this todo" });
+      return res.status(401).json({ error: "You are not authorized to update this todo" });
     }
 
     if (!title) {

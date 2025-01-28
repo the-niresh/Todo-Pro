@@ -31,6 +31,7 @@ const DashBoardPage = () => {
 
   const handleCreateTODO = async (e) => {
     e.preventDefault();
+    console.log("$$$,event.data",e)
     try {
       axios.defaults.withCredentials = true;
       const { data } = await axios.post(backendURL + "/api/todo/create", todoData);

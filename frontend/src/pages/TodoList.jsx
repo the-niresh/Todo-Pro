@@ -5,11 +5,13 @@ import { useState, useEffect, useContext } from "react";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AppContent } from "../context/app.context";
 import SidePanel from "../components/SidePanel";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const TodoList = () => {
-  const { getTodosList, todoslist } = useContext(AppContent);
+  const { getTodosList, todoslist, backendURL } = useContext(AppContent);
   const [rowData, setRowData] = useState([]);
   const [selectedTodo, setSelectedTodo] = useState(null);  // State for selected todo
 
@@ -24,6 +26,8 @@ const TodoList = () => {
     { field: "owner", headerName: "Owner", sortable: true, filter: true },
     { field: "createdAt", headerName: "Created on", sortable: true, filter: true },
     { field: "updatedAt", headerName: "Updated on", sortable: true, filter: true },
+    { field: "description", headerName: "Description" },
+    // { field: "id", headerName: "ID" },
   ]);
 
   useEffect(() => {
@@ -39,20 +43,45 @@ const TodoList = () => {
       status: todo.status,
       owner: todo.owner,
       due: todo.due,
+      description: todo.description,
       createdAt: new Date(todo.createdAt).toLocaleString(),
       updatedAt: new Date(todo.updatedAt).toLocaleString(),
+      id: todo.id
     }));
     setRowData(transformedData);
   }, [todoslist]);
 
-  // Handler for row click event
+  // Handler for click event
   const onRowClick = (event) => {
     setSelectedTodo(event.data);
+    console.log("selectedTodo",event.data)
     setIsModalOpen(true)
   };
+
   const onClickCancel = (event) => {
     setSelectedTodo(event.data);
     setIsModalOpen(false)
+  };
+
+  const onClickDelete =  async (event) => {
+    event.preventDefault();
+    // setIsModalOpen(false)
+    const todoId = selectedTodo.id
+    console.log("backendURL",`${backendURL}/api/todo/${todoId}`)
+    console.log("todoId",todoId)
+    try {
+      const {data} = await axios.delete(`${backendURL}/api/todo/${todoId}`);
+      console.log("$$$,deleteTodo",data)
+      if (data.success) {
+        toast.success("Todo deleted successfully!");
+        setIsModalOpen(false);
+      }
+      else {
+       toast.error("Failed to deeeeeeeeeelete Todo");
+        }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -70,7 +99,7 @@ const TodoList = () => {
             columnDefs={colDefs}
             animateRows={true}
             defaultColDef={{ resizable: true }} // resizable
-            onRowClicked={onRowClick}  // Add row click handler
+            onRowClicked={onRowClick}
           />
         </div>
 
@@ -113,6 +142,14 @@ const TodoList = () => {
                 />
               </div>
               <div>
+                <label>Description: </label>
+                <input
+                  type="text"
+                  value={selectedTodo.description}
+                  readOnly
+                />
+              </div>
+              <div>
                 <label>Created On: </label>
                 <input
                   type="text"
@@ -131,6 +168,13 @@ const TodoList = () => {
               <div className="flex justify-end">
                 <button
                   type="button"
+                  onClick={onClickDelete}
+                  className="mr-2 px-4 py-2 rounded-lg bg-red-400 hover:bg-red-500"
+                >
+                  Delete
+                </button>
+                <button
+                  type="button"
                   onClick={onClickCancel}
                   className="mr-2 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
                 >
@@ -140,7 +184,7 @@ const TodoList = () => {
                   type="submit"
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
-                  Save
+                  edit/Save
                 </button>
                 </div>
             </form>

@@ -27,7 +27,6 @@ const ProfilePage = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    // Submit logic here
     console.log("Updated Data:", formData);
     setIsEditing(false);
   };
