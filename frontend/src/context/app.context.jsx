@@ -16,7 +16,9 @@ export const AppContextProvider = (props) => {
   const [notifications, setNotifications] = useState([]);
 
   // Initialize socket connection
-  const socket = io(backendURL);
+  const socket = io(backendURL, {
+    withCredentials: true, // Include credentials (e.g., cookies)
+});
 
   // Reusable API request function
   const fetchData = async (url, successCallback, errorMessage) => {
