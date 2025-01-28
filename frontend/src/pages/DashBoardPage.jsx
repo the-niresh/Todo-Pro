@@ -1,8 +1,5 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 import SidePanel from "../components/SidePanel";
-import TodoList from "./TodoList";
-import Header from "../components/Header";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { AppContent } from "@/context/app.context";
@@ -12,6 +9,7 @@ const DashBoardPage = () => {
   const navigate = useNavigate();
   const { backendURL } = useContext(AppContent);
 
+  const [activeForm, setActiveForm] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todoData, setTodoData] = useState({
     title: "",
@@ -20,30 +18,68 @@ const DashBoardPage = () => {
     due: "",
     owner: "",
   });
+  const [teamData, setTeamData] = useState({
+    teamName: "",
+    teamImg: "",
+    users: [],
+  });
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setTodoData((prev) => ({ ...prev, [name]: value }));
+    if (e.target.name === "users") {
+      setTeamData((prev) => ({
+        ...prev,
+        [name]: value.split(","),
+      }));
+    } else {
+      setTodoData((prev) => ({ ...prev, [name]: value }));
+      setTeamData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCreateTODO = async (e) => {
     e.preventDefault();
-    console.log("$$$,event.data",e)
     try {
       axios.defaults.withCredentials = true;
-      const { data } = await axios.post(backendURL + "/api/todo/create", todoData);
-      console.log("todoData",todoData)
+      const { data } = await axios.post(
+        backendURL + "/api/todo/create",
+        todoData
+      );
       if (data.success) {
         toast.success("Todo created successfully!");
-        setTodoData({ title: "", description: "", status: "todo", due: "", owner: "" });
-        setIsModalOpen(false);
-        // navigate("/todo-list");
+        setTodoData({
+          title: "",
+          description: "",
+          status: "todo",
+          due: "",
+          owner: "",
+        });
+        // setIsModalOpen(false);
+        setActiveForm(null);
       }
     } catch (error) {
       toast.error("Failed to create Todo");
+    }
+  };
+
+  const handleCreateTEAM = async (e) => {
+    e.preventDefault();
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        backendURL + "/api/team/create",
+        teamData
+      );
+      if (data.success) {
+        toast.success("Team created successfully!");
+        setTeamData({ teamName: "", teamImg: "", users: [] });
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      toast.error("Failed to create Team");
     }
   };
 
@@ -63,19 +99,26 @@ const DashBoardPage = () => {
         />
         <h1 className="text-xl font-bold">Todo App</h1>
         <button
-          onClick={handleOpenModal}
+          onClick={() => setActiveForm("todo")}
           className="mt-5 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
           Create Todo
         </button>
+        <button
+          onClick={() => setActiveForm("team")}
+          className="mt-5 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          Create Team
+        </button>
       </div>
 
       {/* Modal */}
-      {isModalOpen && (
+      {activeForm === "todo" && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
             <h2 className="text-lg font-bold mb-4">Create Todo</h2>
             <form onSubmit={handleCreateTODO}>
+              {/* Todo Fields */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Title
@@ -83,6 +126,7 @@ const DashBoardPage = () => {
                 <input
                   type="text"
                   name="title"
+                  required={true}
                   value={todoData.title}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -116,7 +160,6 @@ const DashBoardPage = () => {
                   <option value="Done">Done</option>
                 </select>
               </div>
-              {/* Due Date Field */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Due Date
@@ -127,10 +170,9 @@ const DashBoardPage = () => {
                   value={todoData.due}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  min={new Date().toISOString().split("T")[0]} // Today's date
+                  min={new Date().toISOString().split("T")[0]}
                 />
               </div>
-              {/* Owner Field */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Owner
@@ -147,7 +189,7 @@ const DashBoardPage = () => {
               <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={handleCloseModal}
+                  onClick={() => setActiveForm(null)}
                   className="mr-2 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
                 >
                   Cancel
@@ -157,6 +199,70 @@ const DashBoardPage = () => {
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
                   Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Team Fields */}
+      {activeForm === "team" && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
+            <h2 className="text-lg font-bold mb-4 mt-6">Create Team</h2>
+            <form onSubmit={handleCreateTEAM}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Team Name
+                </label>
+                <input
+                  type="text"
+                  name="teamName"
+                  value={teamData.teamName}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter team name"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Team Image URL
+                </label>
+                <input
+                  type="text"
+                  name="teamImg"
+                  value={teamData.teamImg}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter team image URL"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Add Users (separated usernames)
+                </label>
+                <input
+                  type="text"
+                  name="users"
+                  value={teamData.users.join(",")}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter user emails"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setActiveForm(null)}
+                  className="mr-2 px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  Create Team
                 </button>
               </div>
             </form>

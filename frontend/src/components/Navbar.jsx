@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { AppContent } from "../context/app.context";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
 
 const Navbar = () => {
   const [selectedTeam, setSelectedTeam] = useState("Teams");
@@ -128,8 +129,12 @@ const Navbar = () => {
             <p className="text-l">
               {selectedTeam === "Teams" ? " " : isTeamAdmin ? "Admin" : "User"}
             </p>
+            <div className="flex items-center justify-center" tabIndex={0} role="button"
+            onClick={navigate("/dashboard")}>
+              <AiOutlineUsergroupAdd className="h-8 w-8" />
+            </div>
             <div className="dropdown dropdown-hover">
-              <div tabIndex={0} role="button" className="">
+              <div tabIndex={0} role="button">
                 <img src="/avatar1.png" alt="user" className="h-8 w-8" />
               </div>
               <ul
