@@ -12,15 +12,15 @@ import notificationRoutes from "./routes/notification.routes.js";
 import teamRoutes from "./routes/team.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
+const allowOrigins = [process.env.VITE_FRONTEND_URL]
+const PORT = process.env.PORT || 5000;
+
 dotenv.config();
 
+const app = express();
 app.use(cors({ origin: allowOrigins, credentials: true }));
 
-const app = express();
-const PORT = process.env.PORT || 5000;
 connectMongoDB();
-
-const allowOrigins = [process.env.VITE_FRONTEND_URL]
 
 app.use(express.json());
 app.use(cookieParser());
