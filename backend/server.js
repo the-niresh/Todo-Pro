@@ -14,6 +14,8 @@ import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
+app.use(cors({ origin: allowOrigins, credentials: true }));
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 connectMongoDB();
@@ -23,8 +25,6 @@ const allowOrigins = [process.env.VITE_FRONTEND_URL]
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(cors({ origin: allowOrigins, credentials: true }));
 
 // ROUTES-api endpoints
 app.use("/api/auth", authRoutes);
