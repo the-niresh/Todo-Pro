@@ -48,7 +48,6 @@ export const AppContextProvider = (props) => {
   }, [backendURL]);
 
   const getUserData = useCallback(async () => {
-    console.log("{{{{{}}}}}}")
     fetchData(
       `${backendURL}/api/auth/me`,
       (data) => setUserData(data),
@@ -57,7 +56,6 @@ export const AppContextProvider = (props) => {
   }, [backendURL]);
 
   const getTodosList = useCallback(async () => {
-    console.log("::::::::")
     fetchData(
       `${backendURL}/api/todo/list/getAll`,
       (data) => setTodosList(data.todo),
@@ -66,7 +64,6 @@ export const AppContextProvider = (props) => {
   }, [backendURL]);
 
   const getTodosBoard = useCallback(async () => {
-    console.log("[[[[[[]]]]]]]")
     fetchData(
       `${backendURL}/api/todo/board/getAll`,
       (data) => setTodosBoard(data.todosByStatus),
