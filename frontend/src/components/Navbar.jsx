@@ -7,13 +7,14 @@ import toast from "react-hot-toast";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 
 const Navbar = () => {
+
+  const { userData, backendURL } = useContext(AppContent);
+  console.log("userData", userData);
+  
   const [selectedTeam, setSelectedTeam] = useState("Teams");
   const [isTeamAdmin, setIsTeamAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { userData, backendURL } = useContext(AppContent);
-  console.log("userData", userData);
 
   // Handle team selection
   const handleTeamSelection = (teamName) => {

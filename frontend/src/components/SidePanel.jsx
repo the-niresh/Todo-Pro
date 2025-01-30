@@ -13,8 +13,6 @@ const SidePanel = () => {
 
   const onClickDashboard = async () => {
     try {
-      
-      // await getTodosList();
       navigate("/dashboard");
     } catch (error) {
       toast.error(error.message || "Failed to fetch dashboard");
@@ -59,8 +57,8 @@ const SidePanel = () => {
 
   const SIDEBAR_ITEMS = [
     { name: "Dashboard", icon: LayoutDashboard, color: "#3B82F6", href: "/dashboard", onClick: onClickDashboard },
-    { name: "Todo list..!!", icon: ListTodo, color: "#6366f1", href: "/todo-list", onClick: onClickTodoList },
-    // { name: "Todo board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
+    { name: "Todo List..!!", icon: ListTodo, color: "#6366f1", href: "/todo-list", onClick: onClickTodoList },
+    { name: "Todo Board..!!", icon: CircuitBoard, color: "#8B5CF6", href: "/todo-board", onClick: onClickTodoBoard },
     { name: "Notifications", icon: BellDot, color: "#EC4899", href: "/notifications", onClick: onClickNotifications },
     { name: "Profile", icon: CircleUserRound, color: "#10B981", href: "/profile", onClick: onClickProfile }
   ];

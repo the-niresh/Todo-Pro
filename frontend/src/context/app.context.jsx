@@ -17,15 +17,15 @@ export const AppContextProvider = (props) => {
 
   // Initialize socket connection
   const socket = io(backendURL, {
-    withCredentials: true, // Include credentials (e.g., cookies)
-});
+    withCredentials: true,
+  });
 
   // Reusable API request function
   const fetchData = async (url, successCallback, errorMessage) => {
     try {
       const { data } = await axios.get(url, { withCredentials: true });
       if (data.success) {
-        console.log("+++",data)
+        console.log("+++", data);
         successCallback(data);
       } else {
         toast.error(data.message || errorMessage);
@@ -35,7 +35,6 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  // Fetch authentication state
   const getAuthState = useCallback(async () => {
     try {
       const { data } = await axios.post(`${backendURL}/api/auth/is-auth`);
@@ -48,8 +47,8 @@ export const AppContextProvider = (props) => {
     }
   }, [backendURL]);
 
-  // Fetch user data
   const getUserData = useCallback(async () => {
+    console.log("{{{{{}}}}}}")
     fetchData(
       `${backendURL}/api/auth/me`,
       (data) => setUserData(data),
@@ -57,8 +56,8 @@ export const AppContextProvider = (props) => {
     );
   }, [backendURL]);
 
-  // Fetch todo list
   const getTodosList = useCallback(async () => {
+    console.log("::::::::")
     fetchData(
       `${backendURL}/api/todo/list/getAll`,
       (data) => setTodosList(data.todo),
@@ -66,8 +65,8 @@ export const AppContextProvider = (props) => {
     );
   }, [backendURL]);
 
-  // Fetch todos board
   const getTodosBoard = useCallback(async () => {
+    console.log("[[[[[[]]]]]]]")
     fetchData(
       `${backendURL}/api/todo/board/getAll`,
       (data) => setTodosBoard(data.todosByStatus),
@@ -91,9 +90,9 @@ export const AppContextProvider = (props) => {
     });
 
     return () => {
-      socket.disconnect(); // Cleanup on component unmount
+      socket.disconnect();
     };
-  }, [socket]);
+  });
 
   // Automatically fetch authentication state on mount
   useEffect(() => {
@@ -109,12 +108,13 @@ export const AppContextProvider = (props) => {
     getUserData,
     todoslist,
     setTodosList,
+    getTodosList,
     todosBoard,
+    getTodosBoard,
+    setTodosBoard,
     notifications,
     setNotifications,
-    getTodosList,
-    getTodosBoard,
-    getNotifications
+    getNotifications,
   };
 
   return (

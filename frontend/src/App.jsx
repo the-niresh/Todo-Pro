@@ -13,7 +13,7 @@ import DashBoardPage from "./pages/DashBoardPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import TodoList from "./pages/TodoList";
 import SidePanel from "./components/SidePanel";
-import TodoBoard from './pages/ToboBoard';
+import TodoBoard from './pages/TodoBoard';
 import ProfilePage from './pages/ProfilePage';
 import Footer from './components/Footer';
 

@@ -31,7 +31,7 @@ export const createTodo = async (req, res) => {
       title,
       description,
       img,
-	  due,
+	    due,
       status,
       owner: userId,
     });
@@ -162,7 +162,6 @@ export const getAllTodos = async (req, res) => {
   try {
     const todos = await Todo.find()
       .sort({ createdAt: -1 })
-    //   .select()
       .populate({ path: "owner", select: "fullName -_id" });
 
     if (todos.length === 0) {
@@ -203,15 +202,27 @@ export const getOneTodo = async (req, res) => {
   }
 };
 
+// Fetch todos grouped by their status
 export const getBoardTodos = async (req, res) => {
   try {
-    // Fetch todos grouped by their status
-    const todoStatuses = ["Todo", "In-progress", "Done"];
+    const todoStatuses = ["Todo", "In_progress", "Done"];
     const todosByStatus = {};
 
     for (const status of todoStatuses) {
-      const todos = await Todo.find({ status }).sort({ createdAt: -1 });
-      todosByStatus[status] = todos;
+      const todos = await Todo.find({ status })
+        .sort({ createdAt: -1 })
+        .populate({ path: "owner", select: "fullName -_id" });
+
+      todosByStatus[status] = todos.map((todo) => ({
+        id: todo._id,
+        title: todo.title,
+        description: todo.description,
+        status: todo.status,
+        due: todo.due,
+        owner: todo.owner?.fullName || "Unknown",
+        createdAt: todo.createdAt,
+        updatedAt: todo.updatedAt,
+      }));
     }
 
     return res.status(200).json({ success: true, todosByStatus });
