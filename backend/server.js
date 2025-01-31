@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
 import http from "http";
+import path from "path";
 
 import authRoutes from "./routes/auth.routes.js"
 import todoRoutes from "./routes/todo.routes.js"
@@ -33,9 +34,30 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/user", userRoutes);
 
+// --------------------------deployment------------------------------
+
+const __dirname1 = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/frontend/dist")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname1, "frontend", "dist", "index.html"))
+  );
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running..");
+  });
+}
+
+// --------------------------deployment------------------------------
+
 // socket.io
 const server = http.createServer(app);
 const io = new Server(server, {
+  path: "/socket",
+  wssEngine: ['ws','wss'],
+  transports: ['websocket','polling'],
   cors: {
     origin: allowOrigins,
     methods: ["GET", "POST", "DELETE"],

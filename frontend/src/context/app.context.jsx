@@ -17,6 +17,12 @@ export const AppContextProvider = (props) => {
 
   // Initialize socket connection
   const socket = io(backendURL, {
+    key: import.meta.env.NODE_ENV === "production" ? import.meta.env.SSL_KEY : '',
+    cert: import.meta.env.NODE_ENV === "production" ? import.meta.env.SSL_CERT : '',
+    path: "/socket",
+    reconnection: true,
+    transports:['websocket','polling'],
+    reconnectionAttempts: 5,
     withCredentials: true,
   });
 
